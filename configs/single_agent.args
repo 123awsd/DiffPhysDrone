@@ -1,11 +1,91 @@
+# DiffDrone Single Agent Configuration
+# DiffDrone 单智能体训练配置
+#
+# This configuration is optimized for single-agent quadrotor flight training.
+# Use this configuration when training a single quadrotor to navigate
+# through obstacles to reach a target position.
+#
+# 该配置针对单智能体四轴飞行器飞行训练进行了优化。
+# 在训练单个四轴飞行器穿越障碍物到达目标位置时使用此配置。
+
+# Enable single-agent mode / 启用单智能体模式
+# When enabled, only 1 quadrotor is simulated per batch
+# 启用时，每批只模拟1个四轴飞行器
 --single
+
+# Speed multiplier for target velocity / 目标速度的乘数
+# Range of target speeds: [0.75, 3.25] m/s (with speed_mtp=4)
+# 目标速度范围：[0.75, 3.25] m/s（当speed_mtp=4时）
+# Higher values encourage faster flight but may reduce stability
+# 较高值鼓励更快飞行，但可能降低稳定性
 --speed_mtp 4
+
+# Acceleration smoothing loss weight / 加速度平滑损失权重
+# Loss term: sum(act^2) / batch_size
+# Encourages smaller accelerations to protect hardware and improve comfort
+# 鼓励较小的加速度以保护硬件并提高舒适性
+# Typical range: 0.005 - 0.05
 --coef_d_acc 0.01
+
+# Jerk smoothing loss weight / Jerk平滑损失权重
+# Loss term: sum((act(t+1) - act(t))^2) / batch_size
+# Penalizes rapid changes in acceleration for smoother flight
+# 惩罚加速度的快速变化以实现更平滑的飞行
+# Typical range: 0.0005 - 0.005
 --coef_d_jerk 0.001
+
+# Add ground obstacles / 添加地面障碍物
+# When enabled, adds hemispherical obstacles on the ground
+# that require the quadrotor to fly higher
+# 启用时，在地面添加半球形障碍物，要求四轴飞行器飞得更高
+# Improves vertical flight capability and altitude control
+# 改善垂直飞行能力和高度控制
 --ground_voxels
+
+# Enable random rotation of the environment / 启用环境随机旋转
+# Randomly rotates the entire scene around the z-axis (yaw)
+# 随机地围绕z轴（偏航）旋转整个场景
+# Helps the model learn rotation-invariant policies
+# 帮助模型学习旋转不变策略
 --random_rotation
+
+# Enable yaw drift disturbance / 启用偏航漂移扰动
+# Adds random yaw angle drift over time, simulating gyroscope bias
+# 随时间添加随机偏航角漂移，模拟陀螺仪偏置
+# Improves robustness to sensor bias
+# 提高对传感器偏置的鲁棒性
 --yaw_drift
+
+# Collision loss weight / 碰撞损失权重
+# Loss term: softplus(-32 * distance) * approaching_velocity
+# Exponential penalty when very close to obstacles
+# 非常接近障碍物时的指数惩罚
+# Higher values make collision avoidance more aggressive
+# 较高值使避障更激进
+# Typical range: 5.0 - 10.0 for obstacle-rich environments
 --coef_collide 7.5
+
+# Obstacle avoidance loss weight / 避障损失权重
+# Loss term: approaching_velocity * max(0, 1 - distance)^2
+# Quadratic penalty when approaching obstacles
+# 接近障碍物时的二次惩罚
+# Higher values encourage staying further from obstacles
+# 较高值鼓励保持离障碍物更远
 --coef_obj_avoidance 3.0
+
+# Camera pitch angle in degrees / 相机俯仰角（度）
+# Angle below horizontal, looking slightly downward
+# 水平以下的角度，略微向下看
+# Typical range: 10 - 30 degrees
+# 10: Slight downward pitch / 轻微向下俯仰
+# 20: Moderate downward pitch / 中等向下俯仰
+# 30: Steep downward pitch / 陡峭向下俯仰
 --cam_angle 20
+
+# Horizontal field of view / 水平视场角
+# Half-tangent of horizontal FOV angle
+# 水平视场角的一半正切
+# Larger values give wider field of view (see more obstacles)
+# 较大值提供更宽的视野（看到更多障碍物）
+# Typical range: 0.53 (standard) - 0.82 (wide)
 --fov_x_half_tan 0.82

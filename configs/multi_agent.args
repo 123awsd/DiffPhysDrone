@@ -1,6 +1,73 @@
+# DiffDrone Multi-Agent Configuration
+# DiffDrone 多智能体训练配置
+#
+# This configuration is optimized for multi-agent quadrotor training.
+# Use this configuration when training multiple quadrotors to
+# coordinate through obstacles and complete tasks together.
+#
+# 该配置针对多智能体四轴飞行器训练进行了优化。
+# 在训练多个四轴飞行器协同穿越障碍物完成任务时使用此配置。
+
+# Add gate task / 添加门任务
+# When enabled, adds gate obstacles that quadrotors must fly through
+# 启用时，添加门障碍物，四轴飞行器必须穿过
+# Gates consist of 4 vertical cylindrical posts forming a square opening
+# 门由4个垂直圆柱形支柱组成，形成方形开口
+# Requires coordination and precise flight control
+# 需要协调和精确的飞行控制
 --gate
+
+# Collision loss weight / 碰撞损失权重
+# Multi-agent collision detection includes:
+# 多智能体碰撞检测包括：
+# - Obstacle collisions (same as single-agent)
+# - 障碍物碰撞（与单智能体相同）
+# - Agent-agent collisions (new for multi-agent)
+# - 智能体间碰撞（多智能体新增）
+# Typical range: 5.0 - 10.0 for multi-agent scenarios
 --coef_collide 5.0
+
+# Obstacle avoidance loss weight / 避障损失权重
+# Multi-agent requires more sophisticated avoidance:
+# 多智能体需要更复杂的避障：
+# - Avoid static obstacles
+# - 避开静态障碍物
+# - Avoid other agents in the same group
+# - 避开同组中的其他智能体
+# - Coordinate paths to prevent congestion
+# - 协调路径以防止拥堵
+# Typical range: 2.0 - 5.0
 --coef_obj_avoidance 2.0
+
+# Batch size / 批次大小
+# Multi-agent training requires larger batch sizes for two reasons:
+# 多智能体训练需要更大的批次大小，原因有二：
+# 1. More agents per batch (e.g., 256 agents = 32 groups of 8)
+# 每批更多智能体（例如：256个智能体 = 32组，每组8个）
+# 2. Better gradient estimation for complex multi-agent dynamics
+# 为复杂的多智能体动力学提供更好的梯度估计
+# Recommended: 256 for multi-agent
 --batch 256
+
+# Horizontal field of view / 水平视场角
+# Same meaning as single-agent config, but wider FOV is beneficial
+# 与单智能体配置含义相同，但更宽的视场对多智能体有益
+# for:
+# 用于：
+# - Seeing other agents in the group
+# - 看到组中的其他智能体
+# - Better coordination through visual information
+# - 通过视觉信息更好地协调
 --fov_x_half_tan 0.82
+
+# Number of timesteps per episode / 每个episode的时间步数
+# Multi-agent tasks are more complex and require more time:
+# 多智能体任务更复杂，需要更多时间：
+# - Coordination takes time to learn
+# - 协调需要时间学习
+# - Agents need to wait for each other
+# - 智能体需要互相等待
+# - Gate flying requires precise timing
+# - 穿门需要精确的时机
+# Typical range: 180 - 300 for complex multi-agent tasks
 --timesteps 180
